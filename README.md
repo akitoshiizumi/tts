@@ -8,9 +8,10 @@ This project converts `.txt` files in the specified directory into audio files u
    ```bash
    pip install -r requirements.txt
    ```
-2. Set your OpenAI API key in `.env`:
-   ```
-   OPENAI_API_KEY=your-api-key-here
+2. Copy `.env.example` to `.env` and set your OpenAI API key:
+   ```bash
+   cp .env.example .env
+   # then edit .env and set your key
    ```
 3. Adjust `setting.ini` to select model, voice, language, etc.
 4. Place your `.txt` files into the `target` directory (or specify another with `--target`).
