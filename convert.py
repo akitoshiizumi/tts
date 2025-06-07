@@ -24,21 +24,25 @@ def convert_files(target_dir: Path, output_dir: Path, settings: dict):
     output_dir.mkdir(parents=True, exist_ok=True)
     for txt_file in target_dir.glob("*.txt"):
         text = txt_file.read_text(encoding="utf-8")
-        options = dict(
-            model=settings["model"],
-            voice=settings["voice"],
-            input=text,
-            response_format=settings["response_format"],
-            speed=settings["speed"],
-        )
-        if settings["language"]:
-            options["language"] = settings["language"]
-        response = client.audio.speech.create(**options)
-        ext = settings["response_format"]
-        out_path = output_dir / f"{txt_file.stem}.{ext}"
-        with open(out_path, "wb") as f:
-            f.write(response.content)
-        print(f"Saved {out_path}")
+        max_length = 4096
+        chunks = [text[i:i+max_length] for i in range(0, len(text), max_length)]
+        for idx, chunk in enumerate(chunks):
+            options = dict(
+                model=settings["model"],
+                voice=settings["voice"],
+                input=chunk,
+                response_format=settings["response_format"],
+                speed=settings["speed"],
+            )
+            response = client.audio.speech.create(**options)
+            ext = settings["response_format"]
+            if len(chunks) == 1:
+                out_path = output_dir / f"{txt_file.stem}.{ext}"
+            else:
+                out_path = output_dir / f"{txt_file.stem}_{idx+1}.{ext}"
+            with open(out_path, "wb") as f:
+                f.write(response.content)
+            print(f"Saved {out_path}")
 
 
 def main():
