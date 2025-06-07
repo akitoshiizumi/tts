@@ -20,6 +20,11 @@ This project converts `.txt` files in the specified directory into audio files u
    python convert.py --target target --audio audio --setting setting.ini
    ```
    Audio files will be generated in the output directory.
+6. Concatenate the generated audio files:
+   ```bash
+   python concat_audio.py --setting setting.ini
+   ```
+   This creates `combined.mp3` in the directory specified by `audio_concat`.
 
 Path options can also be set in the `[paths]` section of `setting.ini`. Command
 line arguments take precedence over the config file values, which in turn
