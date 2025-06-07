@@ -13,11 +13,15 @@ This project converts `.txt` files in the specified directory into audio files u
    cp .env.example .env
    # then edit .env and set your key
    ```
-3. Adjust `setting.ini` to select model, voice, language, etc.
-4. Place your `.txt` files into the `target` directory (or specify another with `--target`).
+3. Adjust `setting.ini` to select model, voice, language and paths.
+4. Place your `.txt` files into the `target` directory (or specify another via `--target` or in `setting.ini`).
 5. Run the converter:
    ```bash
    python convert.py --target target --audio audio --setting setting.ini
    ```
    Audio files will be generated in the output directory.
+
+Path options can also be set in the `[paths]` section of `setting.ini`. Command
+line arguments take precedence over the config file values, which in turn
+override the built-in defaults.
 
