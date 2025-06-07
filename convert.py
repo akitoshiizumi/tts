@@ -9,13 +9,18 @@ from openai import OpenAI
 def load_settings(path: Path):
     config = configparser.ConfigParser()
     config.read(path)
-    section = config["openai"] if "openai" in config else {}
+
+    openai_sec = config["openai"] if "openai" in config else {}
+    paths_sec = config["paths"] if "paths" in config else {}
+
     return {
-        "model": section.get("model", "tts-1-hd"),
-        "voice": section.get("voice", "alloy"),
-        "response_format": section.get("response_format", "mp3"),
-        "language": section.get("language", ""),
-        "speed": float(section.get("speed", "1.0")),
+        "model": openai_sec.get("model", "tts-1-hd"),
+        "voice": openai_sec.get("voice", "alloy"),
+        "response_format": openai_sec.get("response_format", "mp3"),
+        "language": openai_sec.get("language", ""),
+        "speed": float(openai_sec.get("speed", "1.0")),
+        "target": paths_sec.get("target", "target"),
+        "audio": paths_sec.get("audio", "audio"),
     }
 
 
@@ -53,14 +58,18 @@ def convert_files(target_dir: Path, output_dir: Path, settings: dict):
 
 def main():
     parser = argparse.ArgumentParser(description="Convert text files to speech using OpenAI TTS")
-    parser.add_argument("--target", default="target", help="folder containing .txt files")
-    parser.add_argument("--audio", default="audio", help="folder to save audio files")
+    parser.add_argument("--target", help="folder containing .txt files")
+    parser.add_argument("--audio", help="folder to save audio files")
     parser.add_argument("--setting", default="setting.ini", help="path to setting.ini")
     args = parser.parse_args()
 
     load_dotenv()
     settings = load_settings(Path(args.setting))
-    convert_files(Path(args.target), Path(args.audio), settings)
+
+    target_dir = Path(args.target or settings["target"])
+    audio_dir = Path(args.audio or settings["audio"])
+
+    convert_files(target_dir, audio_dir, settings)
 
 
 if __name__ == "__main__":
