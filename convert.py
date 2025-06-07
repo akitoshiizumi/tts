@@ -23,6 +23,12 @@ def convert_files(target_dir: Path, output_dir: Path, settings: dict):
     client = OpenAI()
     output_dir.mkdir(parents=True, exist_ok=True)
     for txt_file in target_dir.glob("*.txt"):
+        ext = settings["response_format"]
+        # Skip if output already exists
+        if list(output_dir.glob(f"{txt_file.stem}*.{ext}")):
+            print(f"Skip {txt_file.name}: output already exists")
+            continue
+        print(f"Processing {txt_file.name}")
         text = txt_file.read_text(encoding="utf-8")
         max_length = 4096
         chunks = [text[i:i+max_length] for i in range(0, len(text), max_length)]
